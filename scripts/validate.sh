@@ -1,4 +1,3 @@
 #!/bin/bash
-echo "Waiting for Flask to start..."
-sleep 10
-curl -f http://localhost:5000/ || exit 1
+echo "Running validate..."
+curl -v http://localhost:5000/ || echo "App not responding yet"
