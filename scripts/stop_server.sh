@@ -1,3 +1,3 @@
 #!/bin/bash
-echo "Stopping Flask app..."
-pkill -f "python3 app.py" || echo "No process found to stop"
+echo "Stopping Flask app if running..."
+pkill -f "python3 app.py" || true
