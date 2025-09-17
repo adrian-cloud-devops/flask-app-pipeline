@@ -3,22 +3,25 @@ set -e
 
 echo ">>> Installing and configuring Nginx..."
 
-# Install Nginx if not installed
-sudo dnf install -y nginx
+# Install Nginx (AL2023 uses nginx1 package)
+sudo dnf install -y nginx1
 
-# Enable Nginx to start on boot
+# Enable Nginx
 sudo systemctl enable nginx
 
-# Copy our app-specific config
+# Make sure conf.d exists
+sudo mkdir -p /etc/nginx/conf.d
+
+# Copy config
 sudo cp /home/ec2-user/flask-todo-app/nginx/flask.conf /etc/nginx/conf.d/
 
 # Remove default config if exists
 sudo rm -f /etc/nginx/conf.d/default.conf || true
 
-# Test config before restart
+# Test config
 sudo nginx -t
 
-# Restart Nginx
+# Restart
 sudo systemctl restart nginx
 
 echo ">>> Nginx installed and restarted"
