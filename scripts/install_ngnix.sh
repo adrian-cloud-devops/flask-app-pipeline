@@ -3,7 +3,7 @@ set -e
 
 echo ">>> Installing and configuring Nginx..."
 
-# Install Nginx (AL2023 uses nginx1 package)
+# Install Nginx (Amazon Linux 2023 package is nginx1)
 sudo dnf install -y nginx1
 
 # Enable Nginx
@@ -13,7 +13,12 @@ sudo systemctl enable nginx
 sudo mkdir -p /etc/nginx/conf.d
 
 # Copy config
-sudo cp /home/ec2-user/flask-todo-app/nginx/flask.conf /etc/nginx/conf.d/
+if [ -f /home/ec2-user/flask-todo-app/nginx/flask.conf ]; then
+  sudo cp /home/ec2-user/flask-todo-app/nginx/flask.conf /etc/nginx/conf.d/
+else
+  echo "flask.conf not found!"
+  exit 1
+fi
 
 # Remove default config if exists
 sudo rm -f /etc/nginx/conf.d/default.conf || true
