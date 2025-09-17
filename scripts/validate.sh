@@ -9,4 +9,8 @@ else
   exit 1
 fi
 
-curl -f http://localhost:5000/ >> /home/ec2-user/flask-todo-app/deploy.log 2>&1 || exit 1
+# we are waiting a little bit to start app
+sleep 5
+
+echo ">>> Curling localhost:5000 ..." >> /home/ec2-user/flask-todo-app/deploy.log
+curl -s http://localhost:5000/ >> /home/ec2-user/flask-todo-app/deploy.log 2>&1 || exit 1
