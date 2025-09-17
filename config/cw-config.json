@@ -9,18 +9,27 @@
         "collect_list": [
           {
             "file_path": "/home/ec2-user/flask-todo-app/deploy.log",
-            "log_group_name": "flask-app-deploy-log",
-            "log_stream_name": "{instance_id}"
+            "log_group_name": "flask-todo-app-deploy",
+            "log_stream_name": "{instance_id}-deploy",
+            "timestamp_format": "%Y-%m-%d %H:%M:%S"
           },
           {
             "file_path": "/var/log/nginx/access.log",
-            "log_group_name": "flask-app-nginx-access",
-            "log_stream_name": "{instance_id}"
+            "log_group_name": "flask-todo-app-nginx",
+            "log_stream_name": "{instance_id}-nginx-access",
+            "timestamp_format": "%d/%b/%Y:%H:%M:%S %z"
           },
           {
             "file_path": "/var/log/nginx/error.log",
-            "log_group_name": "flask-app-nginx-error",
-            "log_stream_name": "{instance_id}"
+            "log_group_name": "flask-todo-app-nginx",
+            "log_stream_name": "{instance_id}-nginx-error",
+            "timestamp_format": "%Y/%m/%d %H:%M:%S"
+          },
+          {
+            "file_path": "/var/log/aws/codedeploy-agent/codedeploy-agent.log",
+            "log_group_name": "flask-todo-app-codedeploy",
+            "log_stream_name": "{instance_id}-codedeploy",
+            "timestamp_format": "%Y-%m-%d %H:%M:%S"
           }
         ]
       }
