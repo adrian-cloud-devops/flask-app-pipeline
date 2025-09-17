@@ -3,8 +3,8 @@ set -e
 
 echo ">>> Installing and configuring Nginx..."
 
-# Install Nginx (Amazon Linux 2023 package is nginx1)
-sudo dnf install -y nginx1
+# Install Nginx 
+sudo dnf install -y nginx
 
 # Enable Nginx
 sudo systemctl enable nginx
