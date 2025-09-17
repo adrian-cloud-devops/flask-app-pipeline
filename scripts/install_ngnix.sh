@@ -15,6 +15,9 @@ sudo cp /home/ec2-user/flask-todo-app/nginx/flask.conf /etc/nginx/conf.d/
 # Remove default config if exists
 sudo rm -f /etc/nginx/conf.d/default.conf || true
 
+# Test config before restart
+sudo nginx -t
+
 # Restart Nginx
 sudo systemctl restart nginx
 

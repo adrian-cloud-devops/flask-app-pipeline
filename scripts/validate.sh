@@ -1,16 +1,20 @@
 #!/bin/bash
-echo ">>> Validating Flask app..." >> /home/ec2-user/flask-todo-app/deploy.log
+set -e
 
-if pgrep -f "python3 app.py" > /dev/null
-then
-  echo "Process is running" >> /home/ec2-user/flask-todo-app/deploy.log
+LOG_FILE="/home/ec2-user/flask-todo-app/deploy.log"
+
+echo ">>> Validating Flask app..." >> $LOG_FILE
+
+# Check if process is running
+if pgrep -f "python3 app.py" > /dev/null; then
+    echo "Process is running" >> $LOG_FILE
 else
-  echo "Process is not running!" >> /home/ec2-user/flask-todo-app/deploy.log
-  exit 1
+    echo "Process is NOT running!" >> $LOG_FILE
+    exit 1
 fi
 
-# we are waiting a little bit to start app
-sleep 5
+# Wait a bit for app + nginx to fully start
+sleep 10
 
-echo ">>> Curling localhost on port 80" >> /home/ec2-user/flask-todo-app/deploy.log
-curl -f http://localhost/ >> /home/ec2-user/flask-todo-app/deploy.log 2>&1 || exit 1
+echo ">>> Curling localhost on port 80" >> $LOG_FILE
+curl -f http://localhost/ >> $LOG_FILE 2>&1 || exit 1
