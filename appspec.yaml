@@ -24,6 +24,10 @@ hooks:
       timeout: 120
       runas: root
 
+    - location: scripts/configure_cw_agent.sh
+      timeout: 120
+      runas: root
+
   ApplicationStart:
     - location: scripts/start_server.sh
       timeout: 60
