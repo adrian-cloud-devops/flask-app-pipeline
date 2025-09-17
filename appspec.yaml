@@ -22,7 +22,7 @@ hooks:
 
     - location: scripts/install_nginx.sh
       timeout: 120
-      runas: root       # root user necessary to install packages
+      runas: root
 
   ApplicationStart:
     - location: scripts/start_server.sh
