@@ -18,6 +18,9 @@ hooks:
     - location: scripts/set_permissions.sh
       timeout: 60
       runas: ec2-user
+    - location: scripts/install_nginx.sh     # <--- NOWE
+      timeout: 120
+      runas: ec2-user
 
   ApplicationStart:
     - location: scripts/start_server.sh

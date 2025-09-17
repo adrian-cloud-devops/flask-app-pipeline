@@ -12,5 +12,5 @@ fi
 # we are waiting a little bit to start app
 sleep 5
 
-echo ">>> Curling localhost:5000 ..." >> /home/ec2-user/flask-todo-app/deploy.log
-curl -s http://localhost:5000/ >> /home/ec2-user/flask-todo-app/deploy.log 2>&1 || exit 1
+echo ">>> Curling localhost on port 80" >> /home/ec2-user/flask-todo-app/deploy.log
+curl -f http://localhost/ >> /home/ec2-user/flask-todo-app/deploy.log 2>&1 || exit 1
