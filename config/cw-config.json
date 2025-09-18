@@ -15,13 +15,13 @@
           },
           {
             "file_path": "/var/log/nginx/access.log",
-            "log_group_name": "flask-todo-app-nginx",
+            "log_group_name": "flask-todo-app-nginx-access",
             "log_stream_name": "{instance_id}-nginx-access",
             "timestamp_format": "%d/%b/%Y:%H:%M:%S %z"
           },
           {
             "file_path": "/var/log/nginx/error.log",
-            "log_group_name": "flask-todo-app-nginx",
+            "log_group_name": "flask-todo-app-nginx-error",
             "log_stream_name": "{instance_id}-nginx-error",
             "timestamp_format": "%Y/%m/%d %H:%M:%S"
           },
