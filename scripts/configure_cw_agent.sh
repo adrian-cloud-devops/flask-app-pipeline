@@ -10,8 +10,9 @@ sudo dnf install -y amazon-cloudwatch-agent
 sudo mkdir -p /opt/aws/amazon-cloudwatch-agent/etc
 sudo cp /home/ec2-user/flask-todo-app/config/cw-config.json /opt/aws/amazon-cloudwatch-agent/etc/config.json
 
-# Start agent
+# Start agent with config
 sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl \
--a start \
--m ec2 \
--c file:/opt/aws/amazon-cloudwatch-agent/etc/config.json
+  -a fetch-config \
+  -m ec2 \
+  -c file:/opt/aws/amazon-cloudwatch-agent/etc/config.json \
+  -s
