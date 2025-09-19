@@ -23,6 +23,10 @@ hooks:
     - location: scripts/configure_cw_agent.sh
       timeout: 120
       runas: root
+    
+    - location: scripts/install_dependencies.sh
+      timeout: 120
+      runas: root
 
   ApplicationStart:
     - location: scripts/start_server.sh
