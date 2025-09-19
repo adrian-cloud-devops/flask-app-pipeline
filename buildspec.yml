@@ -14,9 +14,13 @@ phases:
       - pytest --maxfail=1 --disable-warnings -q
   post_build:
     commands:
-      - echo "Packaging application..."
-      - zip -r build-output.zip * 
+      - echo "Build completed successfully."
 
 artifacts:
   files:
-    - build-output.zip
+    - appspec.yaml
+    - scripts/**/*
+    - app.py
+    - requirements.txt
+    - nginx/**/*
+    - config/**/*
