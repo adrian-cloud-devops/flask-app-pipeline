@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request
+import socket   # 👈 dodaj
 
 app = Flask(__name__)
 
@@ -10,8 +11,13 @@ tasks = [
 
 @app.route("/")
 def index():
-    return "<h1>🚀 Flask Todo App running on EC2!</h1><p>Use /tasks to see the API.</p>"
-
+    hostname = socket.gethostname()
+    ip_address = socket.gethostbyname(hostname)
+    return f"""
+        <h1>🚀 Flask Todo App running on EC2!</h1>
+        <p>Use /tasks to see the API.</p>
+        <p><b>Instance:</b> {hostname} ({ip_address})</p>
+    """
 @app.route("/tasks", methods=["GET"])
 def get_tasks():
     return jsonify(tasks)
