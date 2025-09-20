@@ -12,11 +12,11 @@ tasks = [
 @app.route("/")
 def index():
     hostname = socket.gethostname()
-    ip_address = socket.gethostbyname(hostname)
+   
     return f"""
         <h1>🚀 Flask Todo App running on EC2!</h1>
         <p>Use /tasks to see the API.</p>
-        <p><b>Instance:</b> {hostname} ({ip_address})</p>
+        <p><b>Instance:</b> {hostname}</p>
     """
 @app.route("/tasks", methods=["GET"])
 def get_tasks():
