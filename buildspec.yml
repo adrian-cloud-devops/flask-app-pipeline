@@ -18,7 +18,7 @@ phases:
 
 artifacts:
   files:
-    - appspec.yaml
+    - appspec.yml
     - scripts/**/*
     - app.py
     - requirements.txt
