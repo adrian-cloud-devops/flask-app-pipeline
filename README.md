@@ -1,4 +1,4 @@
-Flask Todo App – CI/CD on AWS
+# **Flask Todo App – CI/CD on AWS**
 
 1. Introduction
 
@@ -7,7 +7,7 @@ The application is deployed on EC2 instances managed by an Auto Scaling Group (A
 
 To ensure reliability and observability, the project integrates Amazon CloudWatch for monitoring (CPU usage, Nginx error logs) and Amazon SNS for alert notifications.
 
-🎯 Project Goals
+🎯 ### **Project Goals**
 
 - Build a production-like DevOps pipeline using AWS services.
 
@@ -15,7 +15,7 @@ To ensure reliability and observability, the project integrates Amazon CloudWatc
 
 - Demonstrate scalability, monitoring, and alerting on a real web application.
 
-🛠️ Technologies Used
+🛠️ ### **Technologies Used**
 
 - AWS: CodePipeline, CodeBuild, CodeDeploy, EC2, ASG, ALB, CloudWatch, SNS
 
