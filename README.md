@@ -50,6 +50,7 @@ A simple Flask Todo application is deployed on multiple EC2 instances inside an 
 
 
 ## **Architecture Diagram**
+
 ![Architecture Diagram](docs/architecture-diagram.jpg)
 
 ## 3. Pipeline (CI/CD) 🔄 
@@ -64,25 +65,30 @@ The CI/CD pipeline is implemented using AWS CodePipeline, which orchestrates the
   - **Build**: CodeBuild runs according to `buildspec.yml` (install dependencies, run `pytest`, package the app).  
     The result is uploaded as a build artifact to S3.
   - **Deploy**: CodeDeploy fetches the artifact from S3 and deploys it to the EC2 instances in the ASG.
+
 ![CodePipeline Overview](docs/codepipeline.png)
 
 - ### **CodeBuild**
   - Uses `buildspec.yml`.
   - Executes unit tests (pytest).
   - Produces the build artifact for CodeDeploy.
-![CodeBuild Build Logs](docs/codebuild_logs.png)
+
+
 ![CodeBuild Phases](docs/codebuild.png)  
 
 - ### **CodeDeploy**
   - Uses `appspec.yml` and lifecycle hooks (`stop → install → start → validate`).
   - Integrated with Auto Scaling Group (ASG) to ensure new and replaced instances are always provisioned with the latest app.
   - Supports automated rollback on deployment failure – if the validation script fails, the deployment is reverted to the previous healthy version.
+
  ![CodeDeploy Phases ](docs/codedeploy.png)   
 
 
 ## **4. Application 💻**
 
-The deployed application is a Flask Todo App running on Amazon EC2 instances inside an Auto Scaling Group.
+The deployed application is a Flask Todo App running on Amazon EC2 instances inside an Auto Scaling Group fronted by Application Load Balancer.
+
+ ![Working Application](docs/application.png)  
 
 ### **Flask Todo App**
   - Simple Flask-based web application with a Todo list.
@@ -162,6 +168,7 @@ This ensures that every new instance created by the ASG is deployment-ready.
 - EC2 Instance Role: communication with CodeDeploy, CloudWatch, S3  
 - CodeBuild & CodeDeploy Roles: permissions for artifact handling and deployments
 
+
 ## **6. Monitoring & Alerts 📊**
 
 Monitoring is handled by Amazon CloudWatch, which provides system metrics, application logs, and proactive alerting through alarms and SNS notifications.
@@ -170,12 +177,17 @@ Monitoring is handled by Amazon CloudWatch, which provides system metrics, appli
 CloudWatch continuously collects metrics from EC2 instances and the application layer.  
 This includes CPU utilization, memory and disk usage (via CloudWatch Agent), as well as application availability through ALB health checks.  
 
-### **CloudWatch Logs**
-Both system and application logs are streamed to CloudWatch Logs:
-- Nginx access and error logs (`/var/log/nginx/access.log`, `/var/log/nginx/error.log`)
-- Flask application logs (`app.log`)  
+![CloudWatch Metrics](docs/cw-metrics.png)
 
-These logs allow troubleshooting, performance monitoring, and error tracking in one central place.
+### **CloudWatch Logs**
+Both system and deployment-related logs are streamed to CloudWatch Logs:
+- Deployment logs (`/home/ec2-user/flask-todo-app/deploy.log`)
+- Nginx access and error logs (`/var/log/nginx/access.log`, `/var/log/nginx/error.log`)
+- CodeDeploy agent logs (`/var/log/aws/codedeploy-agent/codedeploy-agent.log`)
+
+![CloudWatch Logs](docs/cw-logs.png)
+
+These logs provide visibility into deployments, web server activity, and potential application errors, all centralized in CloudWatch for easier troubleshooting and monitoring.
 
 ### **CloudWatch Alarms**
 Alarms are configured to detect and respond to abnormal behavior.  
@@ -184,11 +196,17 @@ Examples include:
 - Error entries in Nginx logs  
 - Failed ALB health checks  
 
-When triggered, alarms send notifications via Amazon SNS.
+![CloudWatch Alarm](docs/cw-alarm.png)
+
+When triggered, alarm send notification via Amazon SNS.
+
+
 
 ### **SNS Notifications**
 Amazon SNS ensures that administrators are informed in real time.  
-Email subscribers receive alerts about high CPU load, application errors, or instance failures, enabling proactive responses to incidents.
+Email subscribers might receive alerts about high CPU load, application errors, or instance failures, enabling proactive responses to incidents.
+
+![Email SNS Notification](docs/sns.png)
 
 ### **Benefits**
 With this setup, all metrics and logs are centralized in CloudWatch, while SNS provides instant awareness.  
@@ -206,15 +224,21 @@ The Auto Scaling Group integrates with CodeDeploy to perform rolling deployments
 2. Once validated, the update continues on the remaining instances.
 3. In case of failure, CodeDeploy automatically triggers a rollback to the last known healthy version.
 
+![Deployment Strategies Diagram](docs/deployment-strategies.png)
+
 ### Health Validation
 Health checks are enforced at two levels:
 1. CodeDeploy validation script (`validate.sh`) confirms the application is reachable on the instance.  
 2. ALB health checks ensure that only healthy instances receive traffic from the load balancer.  
 
+![CodeBuild Build Logs](docs/alb-healthcheck.png)
+
 ### Testing
 Automated tests are included in the pipeline:
 - CodeBuild executes unit tests (`pytest`) as part of the build process.  
 - Validation script adds an extra safety net by simulating real user requests after deployment.  
+
+![CodeBuild Build Logs](docs/codebuild_logs.png)
 
 This dual approach (tests + health checks) guarantees that broken versions never go live and failed deployments are automatically reverted.
 
