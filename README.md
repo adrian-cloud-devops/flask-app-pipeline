@@ -25,7 +25,7 @@ To ensure reliability and observability, the project integrates Amazon CloudWatc
 
 - GitHub: Source code repository
 
-## **2. Architecture 🏗️**
+## 2. Architecture 🏗️
 
 The project follows a cloud-native architecture with a focus on automation, scalability, and monitoring.  
 A simple Flask Todo application is deployed on multiple EC2 instances inside an Auto Scaling Group (ASG), behind an Application Load Balancer (ALB). The entire process is orchestrated by a CI/CD pipeline built with AWS services.  
@@ -59,7 +59,7 @@ A simple Flask Todo application is deployed on multiple EC2 instances inside an 
 ## **Architecture Diagram**
 ![Architecture Diagram](docs/architecture-diagram.jpg)
 
-## **3. Pipeline (CI/CD) 🔄 **
+## 3. Pipeline (CI/CD) 🔄 
 
 The CI/CD pipeline is implemented using AWS CodePipeline, which orchestrates the build, test, and deployment process.
 
@@ -77,7 +77,7 @@ The CI/CD pipeline is implemented using AWS CodePipeline, which orchestrates the
   - Executes unit tests (pytest).
   - Produces the build artifact for CodeDeploy.
 
-- ### ** CodeDeploy**
+- ### **CodeDeploy**
   - Uses `appspec.yml` and lifecycle hooks (`stop → install → start → validate`).
   - Integrated with Auto Scaling Group (ASG) to ensure new and replaced instances are always provisioned with the latest app.
   - Supports automated rollback on deployment failure – if the validation script fails, the deployment is reverted to the previous healthy version.
@@ -102,12 +102,12 @@ The deployed application is a Flask Todo App running on Amazon EC2 instances ins
   - Integrated with CloudWatch Logs for monitoring Flask + Nginx.
 
 
- ### ** Deployment Flow**
+ ### **Deployment Flow**
   - CodeDeploy installs and starts the Flask app on EC2 instances.
   -  Nginx proxies requests from ALB → Flask.
   - Health checks from ALB ensure only healthy instances receive traffic.
 
-### ** Project Structure**
+### **Project Structure**
 
 - `app.py` — Flask application (main app logic)
 - `appspec.yml` — CodeDeploy lifecycle configuration (stop / install / start / validate hooks)
@@ -165,7 +165,7 @@ This ensures that every new instance created by the ASG is deployment-ready.
 - EC2 Instance Role: communication with CodeDeploy, CloudWatch, S3  
 - CodeBuild & CodeDeploy Roles: permissions for artifact handling and deployments
 
-## ** 6. Monitoring & Alerts 📊**
+## **6. Monitoring & Alerts 📊**
 
 Monitoring is handled by Amazon CloudWatch, which provides system metrics, application logs, and proactive alerting through alarms and SNS notifications.
 
@@ -193,7 +193,7 @@ When triggered, alarms send notifications via Amazon SNS.
 Amazon SNS ensures that administrators are informed in real time.  
 Email subscribers receive alerts about high CPU load, application errors, or instance failures, enabling proactive responses to incidents.
 
-### ** Benefits**
+### **Benefits**
 With this setup, all metrics and logs are centralized in CloudWatch, while SNS provides instant awareness.  
 Together with ASG self-healing, this ensures the system is both resilient and observable.
 
