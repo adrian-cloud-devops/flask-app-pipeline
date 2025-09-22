@@ -40,20 +40,13 @@ A simple Flask Todo application is deployed on multiple EC2 instances inside an 
 - **Amazon CloudWatch** – monitors system metrics (CPU) and log groups (Nginx access/error, Flask application logs).  
 - **Amazon SNS** – delivers email alerts triggered by CloudWatch alarms.  
 
-### **🔹 Deployment Flow**
+### 🔹 **Deployment Flow**
 1. Developer pushes code to **GitHub**.  
-2. CodePipeline is triggered automatically.  
-3. CodeBuild runs `buildspec.yml`, executes unit tests, and prepares the deployment package.  
-4. CodeDeploy installs the new version on EC2 instances using lifecycle hooks (`BeforeInstall`, `AfterInstall`, `ApplicationStart`, `ValidateService`).  
-5. ASG + ALB ensure high availability:  
-   - Rolling deployment replaces instances gradually.  
-   - Instances are spread across 3 AZs for fault tolerance.  
-   - ASG runs minimum 2 and up to 3 instances, ensuring resilience and controlled scaling.  
-   - ASG self-healing guarantees failed instances are replaced automatically.  
-   - When a new instance is launched, it connects to the CodeDeploy Deployment Group and retrieves the latest deployed artifact from S3.  
-     This ensures every new instance always runs the current application version without re-running the entire pipeline.  
-
-6. CloudWatch + SNS provide monitoring and notifications.  
+2. **CodePipeline** is triggered automatically.  
+3. **CodeBuild** runs tests and prepares the deployment package.  
+4. **CodeDeploy** installs the new version on EC2 instances (lifecycle hooks).  
+5. **ASG + ALB** ensure rolling updates, high availability, and self-healing.  
+6. **CloudWatch + SNS** provide monitoring and notifications.  
 
 
 ## **Architecture Diagram**
@@ -71,16 +64,20 @@ The CI/CD pipeline is implemented using AWS CodePipeline, which orchestrates the
   - **Build**: CodeBuild runs according to `buildspec.yml` (install dependencies, run `pytest`, package the app).  
     The result is uploaded as a build artifact to S3.
   - **Deploy**: CodeDeploy fetches the artifact from S3 and deploys it to the EC2 instances in the ASG.
+![CodePipeline Overview](docs/codepipeline.png)
 
 - ### **CodeBuild**
   - Uses `buildspec.yml`.
   - Executes unit tests (pytest).
   - Produces the build artifact for CodeDeploy.
+![CodeBuild Build Logs](docs/codebuild_logs.png)
+![CodeBuild Phases](docs/codebuild.png)  
 
 - ### **CodeDeploy**
   - Uses `appspec.yml` and lifecycle hooks (`stop → install → start → validate`).
   - Integrated with Auto Scaling Group (ASG) to ensure new and replaced instances are always provisioned with the latest app.
   - Supports automated rollback on deployment failure – if the validation script fails, the deployment is reverted to the previous healthy version.
+ ![CodeDeploy Phases ](docs/codedeploy.png)   
 
 
 ## **4. Application 💻**

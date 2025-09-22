@@ -5,8 +5,8 @@ app = Flask(__name__)
 
 # sample database
 tasks = [
-    {"id": 1, "title": "Learn AWS", "done": False},
-    {"id": 2, "title": "Build CI/CD pipeline", "done": False},
+    {"id": 1, "title": "Learn AWS", "done": True},
+    {"id": 2, "title": "Build CI/CD pipeline", "done": True},
 ]
 
 @app.route("/")
