@@ -63,21 +63,21 @@ A simple Flask Todo application is deployed on multiple EC2 instances inside an 
 
 The CI/CD pipeline is implemented using AWS CodePipeline, which orchestrates the build, test, and deployment process.
 
-- ### ** 🔹Repository**  
+- ### **🔹Repository**  
   Source code is stored in GitHub and integrated with CodePipeline.
 
-- ### ** 🔹CodePipeline stages**
+- ### **🔹CodePipeline stages**
   - **Source**: Pulls the latest code from GitHub and stores it as a source artifact.
   - **Build**: CodeBuild runs according to `buildspec.yml` (install dependencies, run `pytest`, package the app).  
     The result is uploaded as a build artifact to S3.
   - **Deploy**: CodeDeploy fetches the artifact from S3 and deploys it to the EC2 instances in the ASG.
 
-- ### ** 🔹CodeBuild**
+- ### **🔹CodeBuild**
   - Uses `buildspec.yml`.
   - Executes unit tests (pytest).
   - Produces the build artifact for CodeDeploy.
 
-- ### ** 🔹 CodeDeploy**
+- ### **🔹 CodeDeploy**
   - Uses `appspec.yml` and lifecycle hooks (`stop → install → start → validate`).
   - Integrated with Auto Scaling Group (ASG) to ensure new and replaced instances are always provisioned with the latest app.
   - Supports automated rollback on deployment failure – if the validation script fails, the deployment is reverted to the previous healthy version.
@@ -87,16 +87,16 @@ The CI/CD pipeline is implemented using AWS CodePipeline, which orchestrates the
 
 The deployed application is a Flask Todo App running on Amazon EC2 instances inside an Auto Scaling Group.
 
-### ** 🔹Flask Todo App**
+### **🔹Flask Todo App**
   - Simple Flask-based web application with a Todo list.
   - Accessible via Application Load Balancer (ALB) hostname or public DNS.
 
-### ** 🔹Nginx Reverse Proxy**
+### **🔹Nginx Reverse Proxy**
   - Nginx is configured as a reverse proxy.
   - Forwards external traffic from port 80 → 5000 (Flask app port).
   - Provides separation between web server (Nginx) and application server (Flask).
 
-### ** 🔹CloudWatch Agent configuration**
+### **🔹CloudWatch Agent configuration**
   - Config file: `config/cw-config.json`
   - Collects logs and system metrics (CPU, memory, disk).
   - Integrated with CloudWatch Logs for monitoring Flask + Nginx.
@@ -161,7 +161,7 @@ This ensures that every new instance created by the ASG is deployment-ready.
 - EC2 SG: allows only inbound traffic from ALB (port 5000 internal only)  
 - Outbound access enabled for updates & dependencies
 
-### 🔹 IAM Roles
+###🔹 IAM Roles
 - EC2 Instance Role: communication with CodeDeploy, CloudWatch, S3  
 - CodeBuild & CodeDeploy Roles: permissions for artifact handling and deployments
 
@@ -169,18 +169,18 @@ This ensures that every new instance created by the ASG is deployment-ready.
 
 Monitoring is handled by Amazon CloudWatch, which provides system metrics, application logs, and proactive alerting through alarms and SNS notifications.
 
-### ** 🔹CloudWatch Metrics**
+### **🔹CloudWatch Metrics**
 CloudWatch continuously collects metrics from EC2 instances and the application layer.  
 This includes CPU utilization, memory and disk usage (via CloudWatch Agent), as well as application availability through ALB health checks.  
 
-### ** 🔹CloudWatch Logs**
+### **🔹CloudWatch Logs**
 Both system and application logs are streamed to CloudWatch Logs:
 - Nginx access and error logs (`/var/log/nginx/access.log`, `/var/log/nginx/error.log`)
 - Flask application logs (`app.log`)  
 
 These logs allow troubleshooting, performance monitoring, and error tracking in one central place.
 
-### ** 🔹CloudWatch Alarms**
+### **🔹CloudWatch Alarms**
 Alarms are configured to detect and respond to abnormal behavior.  
 Examples include:
 - CPU utilization exceeding 70%  
@@ -189,10 +189,10 @@ Examples include:
 
 When triggered, alarms send notifications via Amazon SNS.
 
-### ** 🔹SNS Notifications**
+### **🔹SNS Notifications**
 Amazon SNS ensures that administrators are informed in real time.  
 Email subscribers receive alerts about high CPU load, application errors, or instance failures, enabling proactive responses to incidents.
 
-### ** 🔹 Benefits**
+### **🔹 Benefits**
 With this setup, all metrics and logs are centralized in CloudWatch, while SNS provides instant awareness.  
 Together with ASG self-healing, this ensures the system is both resilient and observable.
