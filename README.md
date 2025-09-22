@@ -34,7 +34,7 @@ A simple Flask Todo application is deployed on multiple EC2 instances inside an 
 - **AWS CodePipeline** – orchestrates the CI/CD process (Source → Build → Deploy).  
 - **AWS CodeBuild** – executes commands defined in **buildspec.yml**, runs unit tests (pytest), and produces the deployment artifact.  
 - **AWS CodeDeploy** – handles deployment to EC2 instances using lifecycle hooks defined in **appspec.yml**.  
-- **Amazon EC2** – runs the Flask application with Nginx reverse proxy.  
+- **Amazon EC2 (Custom AMI)** – instances are launched from a custom AMI pre-installed with the AWS CodeDeploy Agent.This ensures that the deployment agent is always available without additional setup. Application code (Flask app + Nginx configuration) is deployed dynamically by CodeDeploy during the pipeline execution.  
 - **Auto Scaling Group (ASG)** – ensures at least 2 running instances (desired = 2, minimum = 2, maximum = 3), distributes them across 3 Availability Zones (AZs) for high availability, and provides self-healing: if an instance or application becomes unhealthy, ASG automatically terminates and replaces it.  
 - **Application Load Balancer (ALB)** – distributes incoming traffic across instances in multiple AZs, performs health checks, and ensures high availability.  
 - **Amazon CloudWatch** – monitors system metrics (CPU) and log groups (Nginx access/error, Flask application logs).  
@@ -50,5 +50,9 @@ A simple Flask Todo application is deployed on multiple EC2 instances inside an 
    - Instances are spread across 3 AZs for fault tolerance.  
    - ASG runs minimum 2 and up to 3 instances, ensuring resilience and controlled scaling.  
    - ASG self-healing guarantees failed instances are replaced automatically.  
+   - When a new instance is launched, it connects to the CodeDeploy Deployment Group and retrieves the latest deployed artifact from S3.  
+     This ensures every new instance always runs the current application version without re-running the entire pipeline.  
+
 6. CloudWatch + SNS provide monitoring and notifications.  
 
+![Architecture Diagram](docs/architecture-diagram.jpg)
