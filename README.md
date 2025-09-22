@@ -82,18 +82,30 @@ The CI/CD pipeline is implemented using AWS CodePipeline, which orchestrates the
   - Integrated with Auto Scaling Group (ASG) to ensure new and replaced instances are always provisioned with the latest app.
   - Supports automated rollback on deployment failure – if the validation script fails, the deployment is reverted to the previous healthy version.
 
-  ## **4. Application**
+
+## **4. Application**
 
 The deployed application is a Flask Todo App running on Amazon EC2 instances inside an Auto Scaling Group.
 
 ### **Flask Todo App**
-- Simple Flask-based web application with a Todo list.
-- Accessible via Application Load Balancer (ALB) hostname or public DNS.
+  - Simple Flask-based web application with a Todo list.
+  - Accessible via Application Load Balancer (ALB) hostname or public DNS.
 
 ### **Nginx Reverse Proxy**
-- Nginx is configured as a reverse proxy.
-- Forwards external traffic from port 80 → 5000 (Flask app port).
-- Provides separation between web server (Nginx) and application server (Flask).
+  - Nginx is configured as a reverse proxy.
+  - Forwards external traffic from port 80 → 5000 (Flask app port).
+  - Provides separation between web server (Nginx) and application server (Flask).
+
+### **CloudWatch Agent configuration**
+  - Config file: `config/cw-config.json`
+  - Collects logs and system metrics (CPU, memory, disk).
+  - Integrated with CloudWatch Logs for monitoring Flask + Nginx.
+
+
+ ### **Deployment Flow**
+  - CodeDeploy installs and starts the Flask app on EC2 instances.
+  -  Nginx proxies requests from ALB → Flask.
+  - Health checks from ALB ensure only healthy instances receive traffic.
 
 ### **Project Structure**
 
@@ -119,9 +131,63 @@ The deployed application is a Flask Todo App running on Amazon EC2 instances ins
 - `config/` — CloudWatch Agent configuration  
   - `cw-config.json` — metrics and logs definition  
 
-- `docs/` — Project documentation and diagrams 
+- `docs/` — Project documentations and diagrams 
 
-  ### **Deployment Flow**
-- CodeDeploy installs and starts the Flask app on EC2 instances.
-- Nginx proxies requests from ALB → Flask.
-- Health checks from ALB ensure only healthy instances receive traffic.
+ 
+
+## 5. Infrastructure
+
+The infrastructure was designed with high availability, scalability, and self-healing in mind.  
+It is based on EC2 instances managed by an Auto Scaling Group and exposed via an Application Load Balancer.
+
+### Amazon EC2
+Instances are launched from a custom Amazon Linux 2023 AMI with the CodeDeploy agent pre-installed.  
+This ensures that every new instance created by the ASG is deployment-ready.
+
+### Auto Scaling Group (ASG)
+- Launch Template with custom AMI
+- Desired capacity: 2
+- Min: 2, Max: 4
+- Instances are distributed across 3 Availability Zones
+- Automatically replaces unhealthy instances (self-healing)
+
+### Application Load Balancer (ALB)
+- Listens on port 80
+- Performs health checks on target instances
+- Routes traffic only to healthy instances inside the ASG
+
+### Security Groups
+- ALB SG: allows inbound HTTP (80) from the internet  
+- EC2 SG: allows only inbound traffic from ALB (port 5000 internal only)  
+- Outbound access enabled for updates & dependencies
+
+### IAM Roles
+- EC2 Instance Role: communication with CodeDeploy, CloudWatch, S3  
+- CodeBuild & CodeDeploy Roles: permissions for artifact handling and deployments
+
+## 6. Monitoring & Alerts
+
+Monitoring was implemented using Amazon CloudWatch to ensure application reliability, visibility, and proactive alerting.
+
+### **CloudWatch Metrics**
+- EC2 metrics: CPU utilization, memory, disk usage (via CloudWatch Agent).
+- Application metrics: Flask app availability (via ALB health checks).
+- Nginx logs: access and error logs streamed into CloudWatch Logs.
+
+### **CloudWatch Logs**
+- Collected from:
+  - `/var/log/nginx/access.log`
+  - `/var/log/nginx/error.log`
+  - Flask application logs (`app.log`)
+- Used for troubleshooting, performance monitoring, and error tracking.
+
+### **CloudWatch Alarms**
+Alarms are configured to notify on critical events:
+- CPU Utilization > 70%
+- Nginx error logs detected
+- ALB health check failures
+
+### **SNS Notifications**
+- Alarms are connected to Amazon SNS.
+- Notifications are sent to email subscribers for immediate awareness.
+- This enables proactive response to incidents (e.g., high CPU, application errors).
