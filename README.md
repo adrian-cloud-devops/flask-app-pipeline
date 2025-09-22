@@ -154,6 +154,8 @@ This ensures that every new instance created by the ASG is deployment-ready.
 - Instances are distributed across 3 Availability Zones
 - Automatically replaces unhealthy instances (self-healing)
 
+![AutoScalling Group Logs](docs/asg-logs.png)
+
 ### Application Load Balancer (ALB)
 - Listens on port 80
 - Performs health checks on target instances
