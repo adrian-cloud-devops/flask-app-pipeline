@@ -55,4 +55,29 @@ A simple Flask Todo application is deployed on multiple EC2 instances inside an 
 
 6. CloudWatch + SNS provide monitoring and notifications.  
 
+
+## **Architecture Diagram**
 ![Architecture Diagram](docs/architecture-diagram.jpg)
+
+## 3. Pipeline (CI/CD)
+
+The CI/CD pipeline is implemented using AWS CodePipeline, which orchestrates the build, test, and deployment process.
+
+- ### **Repository**  
+  Source code is stored in GitHub and integrated with CodePipeline.
+
+- ### **CodePipeline stages**
+  - **Source**: Pulls the latest code from GitHub and stores it as a source artifact.
+  - **Build**: CodeBuild runs according to `buildspec.yml` (install dependencies, run `pytest`, package the app).  
+    The result is uploaded as a build artifact to S3.
+  - **Deploy**: CodeDeploy fetches the artifact from S3 and deploys it to the EC2 instances in the ASG.
+
+- ### **CodeBuild**
+  - Uses `buildspec.yml`.
+  - Executes unit tests (pytest).
+  - Produces the build artifact for CodeDeploy.
+
+- ### **CodeDeploy**
+  - Uses `appspec.yml` and lifecycle hooks (`stop → install → start → validate`).
+  - Integrated with Auto Scaling Group (ASG) to ensure new and replaced instances are always provisioned with the latest app.
+  - Supports automated rollback on deployment failure – if the validation script fails, the deployment is reverted to the previous healthy version.
