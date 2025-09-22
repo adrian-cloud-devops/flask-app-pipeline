@@ -59,7 +59,7 @@ A simple Flask Todo application is deployed on multiple EC2 instances inside an 
 ## **Architecture Diagram**
 ![Architecture Diagram](docs/architecture-diagram.jpg)
 
-## 3. Pipeline (CI/CD)
+## **3. Pipeline (CI/CD)**
 
 The CI/CD pipeline is implemented using AWS CodePipeline, which orchestrates the build, test, and deployment process.
 
@@ -81,3 +81,47 @@ The CI/CD pipeline is implemented using AWS CodePipeline, which orchestrates the
   - Uses `appspec.yml` and lifecycle hooks (`stop → install → start → validate`).
   - Integrated with Auto Scaling Group (ASG) to ensure new and replaced instances are always provisioned with the latest app.
   - Supports automated rollback on deployment failure – if the validation script fails, the deployment is reverted to the previous healthy version.
+
+  ## **4. Application**
+
+The deployed application is a Flask Todo App running on Amazon EC2 instances inside an Auto Scaling Group.
+
+### **Flask Todo App**
+- Simple Flask-based web application with a Todo list.
+- Accessible via Application Load Balancer (ALB) hostname or public DNS.
+
+### **Nginx Reverse Proxy**
+- Nginx is configured as a reverse proxy.
+- Forwards external traffic from port 80 → 5000 (Flask app port).
+- Provides separation between web server (Nginx) and application server (Flask).
+
+### **Project Structure**
+
+- `app.py` — Flask application (main app logic)
+- `appspec.yml` — CodeDeploy lifecycle configuration (stop / install / start / validate hooks)
+- `buildspec.yml` — CodeBuild build & test steps (pytest, dependencies installation)
+- `requirements.txt` — Python dependencies
+- `test_app.py` — Unit tests for Flask app (pytest)
+
+**Folders**
+- `scripts/` — Deployment scripts for CodeDeploy
+  - `install_dependencies.sh` — install Python dependencies  
+  - `install_nginx.sh` — install and configure Nginx  
+  - `configure_cw_agent.sh` — configure CloudWatch Agent  
+  - `set_permissions.sh` — set correct file permissions  
+  - `start_server.sh` — start Flask app  
+  - `stop_server.sh` — stop Flask app  
+  - `validate.sh` — health check (curl on app endpoint)  
+
+- `nginx/` — Reverse proxy configuration  
+  - `flask.conf` — Nginx config (redirect 80 → 5000, proxy_pass)  
+
+- `config/` — CloudWatch Agent configuration  
+  - `cw-config.json` — metrics and logs definition  
+
+- `docs/` — Project documentation and diagrams 
+
+  ### **Deployment Flow**
+- CodeDeploy installs and starts the Flask app on EC2 instances.
+- Nginx proxies requests from ALB → Flask.
+- Health checks from ALB ensure only healthy instances receive traffic.
