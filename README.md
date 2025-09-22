@@ -196,7 +196,7 @@ Examples include:
 - Error entries in Nginx logs  
 - Failed ALB health checks  
 
-![CloudWatch Alarm](docs/cw-alarm.png)
+![CloudWatch Alarm](docs/cw-alarms.png)
 
 When triggered, alarm send notification via Amazon SNS.
 
