@@ -165,29 +165,34 @@ This ensures that every new instance created by the ASG is deployment-ready.
 - EC2 Instance Role: communication with CodeDeploy, CloudWatch, S3  
 - CodeBuild & CodeDeploy Roles: permissions for artifact handling and deployments
 
-## 6. Monitoring & Alerts
+## **6. Monitoring & Alerts**
 
-Monitoring was implemented using Amazon CloudWatch to ensure application reliability, visibility, and proactive alerting.
+Monitoring is handled by Amazon CloudWatch, which provides system metrics, application logs, and proactive alerting through alarms and SNS notifications.
 
 ### **CloudWatch Metrics**
-- EC2 metrics: CPU utilization, memory, disk usage (via CloudWatch Agent).
-- Application metrics: Flask app availability (via ALB health checks).
-- Nginx logs: access and error logs streamed into CloudWatch Logs.
+CloudWatch continuously collects metrics from EC2 instances and the application layer.  
+This includes CPU utilization, memory and disk usage (via CloudWatch Agent), as well as application availability through ALB health checks.  
 
 ### **CloudWatch Logs**
-- Collected from:
-  - `/var/log/nginx/access.log`
-  - `/var/log/nginx/error.log`
-  - Flask application logs (`app.log`)
-- Used for troubleshooting, performance monitoring, and error tracking.
+Both system and application logs are streamed to CloudWatch Logs:
+- Nginx access and error logs (`/var/log/nginx/access.log`, `/var/log/nginx/error.log`)
+- Flask application logs (`app.log`)  
+
+These logs allow troubleshooting, performance monitoring, and error tracking in one central place.
 
 ### **CloudWatch Alarms**
-Alarms are configured to notify on critical events:
-- CPU Utilization > 70%
-- Nginx error logs detected
-- ALB health check failures
+Alarms are configured to detect and respond to abnormal behavior.  
+Examples include:
+- CPU utilization exceeding 70%  
+- Error entries in Nginx logs  
+- Failed ALB health checks  
+
+When triggered, alarms send notifications via Amazon SNS.
 
 ### **SNS Notifications**
-- Alarms are connected to Amazon SNS.
-- Notifications are sent to email subscribers for immediate awareness.
-- This enables proactive response to incidents (e.g., high CPU, application errors).
+Amazon SNS ensures that administrators are informed in real time.  
+Email subscribers receive alerts about high CPU load, application errors, or instance failures, enabling proactive responses to incidents.
+
+### **Benefits**
+With this setup, all metrics and logs are centralized in CloudWatch, while SNS provides instant awareness.  
+Together with ASG self-healing, this ensures the system is both resilient and observable.
