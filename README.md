@@ -30,7 +30,7 @@ To ensure reliability and observability, the project integrates Amazon CloudWatc
 The project follows a cloud-native architecture with a focus on automation, scalability, and monitoring.  
 A simple Flask Todo application is deployed on multiple EC2 instances inside an Auto Scaling Group (ASG), behind an Application Load Balancer (ALB). The entire process is orchestrated by a CI/CD pipeline built with AWS services.  
 
-### **🔹 Key Components**
+### **Key Components**
 - **AWS CodePipeline** – orchestrates the CI/CD process (Source → Build → Deploy).  
 - **AWS CodeBuild** – executes commands defined in **buildspec.yml**, runs unit tests (pytest), and produces the deployment artifact.  
 - **AWS CodeDeploy** – handles deployment to EC2 instances using lifecycle hooks defined in **appspec.yml**.  
@@ -40,7 +40,7 @@ A simple Flask Todo application is deployed on multiple EC2 instances inside an 
 - **Amazon CloudWatch** – monitors system metrics (CPU) and log groups (Nginx access/error, Flask application logs).  
 - **Amazon SNS** – delivers email alerts triggered by CloudWatch alarms.  
 
-### 🔹 **Deployment Flow**
+### **Deployment Flow**
 1. Developer pushes code to **GitHub**.  
 2. **CodePipeline** is triggered automatically.  
 3. **CodeBuild** runs tests and prepares the deployment package.  
